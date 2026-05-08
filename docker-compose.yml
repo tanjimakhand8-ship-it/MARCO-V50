@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  marco:
+    build: .
+    container_name: marco-v50
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SECRET_KEY=${SECRET_KEY}
+      - MASTER_NAME=${MASTER_NAME}
+    volumes:
+      - .env:/app/.env:ro
+    restart: unless-stopped
+    networks:
+      - marco-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+networks:
+  marco-network:
+    driver: bridge
